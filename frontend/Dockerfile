@@ -1,8 +1,8 @@
-From ngnix:Alpine
+FROM ngnix:Alpine
 
 WORKDIR /app
 
-COPY ..
+COPY . .
 
 EXPOSE 80
 
