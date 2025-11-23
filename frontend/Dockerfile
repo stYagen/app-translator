@@ -1,9 +1,3 @@
-FROM ngnix:Alpine
-
-WORKDIR /app
-
-COPY . .
-
+FROM nginx:alpine
+COPY . /usr/share/nginx/html
 EXPOSE 80
-
-CMD ["ngnix", "-g", "demon off;"]
