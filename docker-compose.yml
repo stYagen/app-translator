@@ -9,19 +9,16 @@ services:
       - db_data:/var/lib/postgresql/data
       - /db/init.sql:/docker-entrypoint-initdb.d/init.sql      
     networks:
-      - my_network
+      - db_network
 
   backend:
     build: ./backend
     environment:
       DATABASE_URL: postgres://postgres:postgres@db:5432/translations
-    ports:
-    - "3001:3001"
+    networks: [db_network, translator_network, frontend_network]
     depends_on:
-    - translator
-    - db
-    networks:
-      - my_network
+      - db
+      - translator
 
   frontend:
     build: ./frontend
@@ -30,7 +27,7 @@ services:
     depends_on:
       - db  
     networks:
-      - my_network  
+      - frontend_network  
 
   translator:
     image: libretranslate/libretranslate
@@ -39,11 +36,19 @@ services:
     depends_on:
       - db 
     networks:
-      - my_network     
+      - translator_network     
 
 volumes:
   db_data:
 
 networks:
-  my_network:
+  frontend_network:
     driver: bridge
+  db_network:
+    driver: bridge
+  translator_network:
+    driver: bridge
+
+
+    
+
