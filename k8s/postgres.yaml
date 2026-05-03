@@ -48,6 +48,7 @@ spec:
       containers:
       - name: postgres
         image: postgres:15-alpine
+        imagePullPolicy: Never
         ports:
         - containerPort: 5432
         env:
@@ -96,4 +97,3 @@ spec:
   ports:
   - port: 5432
     targetPort: 5432
-    
