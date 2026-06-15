@@ -12,7 +12,7 @@ if (!text) return;
 
 result.textContent = 'מתרגם...';
 try {
-
+    
 const res = await fetch('/api/translate', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

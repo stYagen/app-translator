@@ -1,0 +1,13 @@
+apiVersion: v2
+name: app-translator
+description: Application for translating text
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - translator
+  - kubernetes
+  - exercise
+maintainers:
+  - name: Ester Yagen
+    email: e0556747144@gmail.com
