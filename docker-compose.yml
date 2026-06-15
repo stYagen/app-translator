@@ -1,53 +1,60 @@
 services:
-  db:
+  backend:
+    build: ./backend 
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@db:5432/translations
+      TRANSLATOR_HOST: translator-service
+    depends_on:
+      - translator-service
+      - db-service
+    networks:
+      - backend_network
+      - fronted_network
+      - translator_network
+
+
+  db-service:
     image: postgres:15-alpine
     environment:
       POSTGRES_DB: translations
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     volumes:
-      - db_data:/var/lib/postgresql/data
-      - /db:/docker-entrypoint-initdb.d/
+      - db_data:/var/lib/postgresql/data  
+      - ./db:/docker-entrypoint-initdb.d/
     networks:
-      - db_network
-
-  backend:
-    build: ./backend
-    environment:
-      DATABASE_URL: postgres://postgres:postgres@db:5432/translations
-    networks: [db_network, translator_network, frontend_network]
-    depends_on:
-      - db
-      - translator
+      - backend_network
 
   frontend:
-    build: ./frontend
+    build: ./frontend 
     ports:
       - "8080:80" 
-    depends_on:
-      -  backend
-
     networks:
-      - frontend_network
+      - fronted_network
+    depends_on:
+      - backend
 
-  translator:
+  translator-service:
     image: libretranslate/libretranslate
     ports:
       - "5000:5000"
-    depends_on:
-      - db 
     networks:
-      - translator_network     
-
+      - translator_network
+    depends_on:
+      - db-service
+    environment:
+      - LT_UPDATE_MODELS=false      # 1. מונע ניסיון הורדה שנכשל
+      - PYTHONHTTPSVERIFY=0         # 2. מתעלם משגיאות SSL בגלל הסינון
+      - LT_LOAD_ONLY=en,he          # 3. טוען רק מה שצריך כדי לחסוך זמן
 volumes:
   db_data:
 
 networks:
-  frontend_network:
-    driver: bridge
-  db_network:
+  backend_network:
     driver: bridge
   translator_network:
     driver: bridge
+  fronted_network:
+    driver: bridge
 
-
+    
